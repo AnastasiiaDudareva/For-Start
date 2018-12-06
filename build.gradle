@@ -1,0 +1,27 @@
+
+buildscript {
+    apply from: 'dependencies.gradle'
+
+    repositories {
+        google()
+        jcenter()
+        maven { url 'https://maven.fabric.io/public' }
+    }
+    dependencies {
+        classpath gradlePlugins.gradle
+        classpath gradlePlugins.realm
+        classpath gradlePlugins.fabric
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        maven { url 'https://jitpack.io' }
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

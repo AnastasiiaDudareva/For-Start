@@ -1,0 +1,81 @@
+apply plugin: 'com.android.application'
+apply plugin: 'realm-android'
+//apply plugin: 'io.fabric'
+apply from: '../config.gradle'
+apply from: '../dependencies.gradle'
+
+android {
+    compileSdkVersion versions.compileSdk
+    defaultConfig {
+        applicationId APPLICATION_ID
+        minSdkVersion versions.minSdk
+        targetSdkVersion versions.targetSdk
+        versionCode computeVersionCode()
+        versionName computeVersionName()
+        buildConfigField 'String', 'DEV_DOMAIN', "\"$DEV_DOMAIN\""
+        buildConfigField 'String', 'PROD_DOMAIN', "\"PROD_DOMAIN\""
+        buildConfigField 'String', 'SCHEME', "\"$SCHEME\""
+    }
+
+    buildTypes {
+        all {
+            generateName(applicationVariants)
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android.txt')
+            proguardFiles "$project.rootDir/tools/proguard/rules-global.pro"
+            proguardFiles fileTree(dir: "$project.rootDir/tools/proguard/libs", include: ['*.pro']).asList().toArray()
+        }
+
+        debug {
+            debuggable true
+            proguardFiles "$project.rootDir/tools/proguard/rules-debug.pro"
+        }
+
+        release {
+            debuggable false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    dataBinding {
+        enabled = true
+    }
+
+    packagingOptions {
+        exclude 'META-INF/proguard/androidx-annotations.pro'
+    }
+}
+
+dependencies {
+    //Support
+    implementation libraries.supportAppCompat
+    implementation libraries.constraintLayout
+
+    //Rx
+    implementation libraries.rxJava
+    implementation libraries.rxAndroid
+    implementation libraries.rxBinding
+    implementation libraries.rxPermissions
+
+    // Dagger
+    implementation libraries.dagger
+    annotationProcessor libraries.daggerCompiler
+
+    //retrofit
+    implementation libraries.okhttpLogging
+    implementation libraries.retrofit
+    implementation libraries.retrofitGson
+    implementation libraries.rxRetrofit
+
+    //hawk
+    implementation libraries.hawk
+
+    //jodaTime
+    implementation libraries.jodaTime
+}
